@@ -1,0 +1,182 @@
+openapi: 3.0.3
+info:
+  title: Онлайн-магазин комиксов API
+  description: |
+    This is an API specification for a comic purchase application. Users can browse, search, and purchase comics through this API.
+  version: 1.0.0
+servers:
+- url: https://comic-purchase-api.example.com/api/v1
+  description: Production server
+tags:
+- name: comic
+  description: Operations related to comics
+- name: user
+  description: Operations related to users
+paths:
+  /comics:
+    get:
+      tags:
+      - comic
+      summary: Get list of comics
+      description: Returns a list of available comics.
+      operationId: comics_get
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Comic'
+                x-content-type: application/json
+      x-openapi-router-controller: swagger_server.controllers.comic_controller
+    post:
+      tags:
+      - comic
+      summary: Purchase a comic
+      description: Purchase a comic by providing comic ID.
+      operationId: comics_post
+      parameters:
+      - name: comicId
+        in: query
+        description: ID of the comic to purchase
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PurchaseResponse'
+      x-openapi-router-controller: swagger_server.controllers.comic_controller
+  /users:
+    post:
+      tags:
+      - user
+      summary: Register a new user
+      description: Register a new user with the application.
+      operationId: users_post
+      requestBody:
+        description: User registration details
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRegistration'
+        required: true
+      responses:
+        "200":
+          description: User registered successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+      x-openapi-router-controller: swagger_server.controllers.user_controller
+components:
+  schemas:
+    Comic:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Unique identifier of the comic
+          format: int64
+        title:
+          type: string
+          description: Title of the comic
+        author:
+          type: string
+          description: Author of the comic
+        price:
+          minimum: 0
+          type: number
+          description: Price of the comic
+          format: float
+        genre:
+          type: string
+          description: Genre of the comic
+      example:
+        author: author
+        price: 0.6027456
+        genre: genre
+        id: 0
+        title: title
+    UserRegistration:
+      type: object
+      properties:
+        username:
+          type: string
+          description: Username of the user
+        email:
+          type: string
+          description: Email address of the user
+          format: email
+        password:
+          type: string
+          description: Password of the user
+        address:
+          $ref: '#/components/schemas/UserRegistration_address'
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Unique identifier of the user
+          format: int64
+        username:
+          type: string
+          description: Username of the user
+        email:
+          type: string
+          description: Email address of the user
+          format: email
+        address:
+          $ref: '#/components/schemas/UserRegistration_address'
+      example:
+        address:
+          zip: zip
+          city: city
+          street: street
+          state: state
+        id: 0
+        email: ""
+        username: username
+    PurchaseResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          description: Purchase message
+        orderId:
+          type: integer
+          description: Unique identifier of the order
+          format: int64
+      example:
+        orderId: 0
+        message: message
+    UserRegistration_address:
+      type: object
+      properties:
+        street:
+          type: string
+          description: Street
+        city:
+          type: string
+          description: City
+        state:
+          type: string
+          description: State
+        zip:
+          type: string
+          description: Zip code
+      description: Address of the user
+      example:
+        zip: zip
+        city: city
+        street: street
+        state: state
+
