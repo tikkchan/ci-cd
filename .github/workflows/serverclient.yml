@@ -33,7 +33,7 @@ jobs:
         
     - name: Install client dependencies  
       run: |
-        cd client
+        cd python-client-generated
         python -m pip install --upgrade pip
         pip install -r requirements.txt
         pip install prometheus_client
@@ -41,7 +41,7 @@ jobs:
         
     - name: Run Client
       run: |
-        cd client
+        cd python-client-generated
         python main.py
 
 # name: Swagger Server
