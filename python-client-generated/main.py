@@ -12,7 +12,7 @@ configuration.host = 'http://localhost:8080/api/v1/'
 api_instance = swagger_client.ComicApi(swagger_client.ApiClient(configuration))
 
 # Настройка логгера
-logging.basicConfig(filename='C:/Users/rodio/Desktop/python-flask-server-generated/var/log/123.log', level=logging.INFO)
+logging.basicConfig(filename='./var/log/123.log', level=logging.INFO)
 
 try:
     # Get list of comics
