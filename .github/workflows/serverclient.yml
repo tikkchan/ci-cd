@@ -20,7 +20,7 @@ jobs:
         
     - name: Install server dependencies
       run: |
-        cd server
+        cd python-flask-server-generated
         python -m pip install --upgrade pip
         pip install -r requirements.txt
         pip install prometheus_client
@@ -28,7 +28,7 @@ jobs:
         
     - name: Run Swagger Server
       run: |
-        cd server
+        cd python-flask-server-generated
         python -m swagger_server.__main__ &
         
     - name: Install client dependencies  
