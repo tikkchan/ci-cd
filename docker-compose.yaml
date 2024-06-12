@@ -101,7 +101,7 @@ services:
     depends_on:
       - "victoriametrics"
     ports:
-      - "3500:3000"
+      - "3555:3000"
     volumes:
       - grafanadata:/var/lib/grafana
       - ./provisioning/:/etc/grafana/provisioning/
