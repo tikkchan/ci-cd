@@ -1,6 +1,15 @@
 version: "3.8"
 
 services:
+  app:
+    build: .
+    hostname: app
+    restart: unless-stopped
+    ports:
+      - '8889:8080'
+    networks:
+      - vm_net
+
   tempo:
     image: grafana/tempo:latest
     command: [ "-config.file=/etc/tempo.yaml" ]
@@ -8,11 +17,11 @@ services:
       - ./tempo.yaml:/etc/tempo.yaml
       - ./tempo-data/:/tmp/tempo
     ports:
-      - "14268:14268" # jaeger ingest
-      - "3200:3200" # tempo
-      - "4317:4317" # otlp grpc
-      - "4318:4318" # otlp http
-      - "9411:9411" # zipkin
+      - "15268:14268" # jaeger ingest
+      - "3500:3200" # tempo
+      - "4517:4317" # otlp grpc
+      - "4518:4318" # otlp http
+      - "9511:9411" # zipkin
     # network_mode: "host"
     healthcheck:
       test: [ "CMD", "grpc", "health", "check" ]
@@ -25,7 +34,7 @@ services:
   prometheus:
     image: prom/prometheus
     ports:
-      - "9090:9090"
+      - "9590:9090"
     volumes:
       - ./prometheus:/etc/prometheus.yml
     command:
@@ -33,23 +42,10 @@ services:
     networks:
       - vm_net
 
-#  otel-collector:
-#     image: otel/opentelemetry-collector-contrib:latest
-#     ports:
-#       - "6831:6831" # ???
-#       - "14268:14268" # jaeger ingest
-#       - "4317:4317" # otlp grpc
-#     volumes:
-#       - ./otel-collector.yaml:otel-collector.yaml
-#     command:
-#       - '--config=otel-collector.yaml'
-#     networks:
-#       - vm_net
-
   loki:
     image: grafana/loki:2.9.0
     ports:
-      - "3100:3100"
+      - "3500:3100"
     volumes:
       - ./loki-config.yaml:/etc/loki-config.yaml
     command: -config.file=/etc/loki-config.yaml
@@ -66,12 +62,11 @@ services:
       - vm_net
 
   vmagent:
-    container_name: vmagent
     image: victoriametrics/vmagent:v1.94.0
     depends_on:
       - "victoriametrics"
     ports:
-      - "8429:8429"
+      - "8529:8429"
     volumes:
       - vmagentdata:/vmagentdata
       - ./prometheus.yml:/etc/prometheus.yml
@@ -83,13 +78,12 @@ services:
     restart: always
 
   victoriametrics:
-    container_name: victoriametrics
     image: victoriametrics/victoria-metrics:v1.94.0
     ports:
-      - "8428:8428"
-      - "8089:8089"
-      - "2003:2003"
-      - "4242:4242"
+      - "8528:8428"
+      - "8589:8089"
+      - "2503:2003"
+      - "4542:4242"
     volumes:
       - vmdata:/storage
     command:
@@ -103,12 +97,11 @@ services:
     restart: always
 
   grafana:
-    container_name: grafana
     image: grafana/grafana:9.2.7
     depends_on:
       - "victoriametrics"
     ports:
-      - "3000:3000"
+      - "3500:3000"
     volumes:
       - grafanadata:/var/lib/grafana
       - ./provisioning/:/etc/grafana/provisioning/
